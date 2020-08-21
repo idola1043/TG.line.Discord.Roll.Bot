@@ -1,14 +1,9 @@
 "use strict";
-exports.analytics = require('../modules/analytics');
+exports.analytics = require('./core-analytics');
 const channelKeyword = process.env.DISCORD_CHANNEL_KEYWORD || "";
 const channelSecret = process.env.DISCORD_CHANNEL_SECRET;
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const {
-	Random,
-	nodeCrypto
-} = require("random-js");
-const random = new Random(nodeCrypto);
 //const BootTime = new Date(new Date().toLocaleString("en-US", {
 //	timeZone: "Asia/Shanghai"
 //}));
@@ -16,13 +11,21 @@ const random = new Random(nodeCrypto);
 //  i.e., `User.js` will become `exports['User']` or `exports.User`
 //var Discordcountroll = 0;
 //var Discordcounttext = 0;
+const EXPUP = require('./level').EXPUP || function () {};
+const courtMessage = require('./logs').courtMessage || function () {};
 const joinMessage = "你剛剛添加了HKTRPG 骰子機械人! \
 		\n輸入 1D100 可以進行最簡單的擲骰.\
 		\n輸入 Bothelp 觀看詳細使用說明.\
 		\n如果你需要幫助, 加入支援頻道.\
 		\n(http://bit.ly/HKTRPG_DISCORD)\
 		\n有關TRPG資訊, 可以到網站\
-		\n(http://www.hktrpg.com/)";
+		\n(http://www.hktrpg.com/)\
+		\n\n骰子機械人意見調查問卷\
+		\n引言: 我是HKTRPG骰子機械人的製作者，這份問卷的目的，是蒐集對骰子機械人的意見及HKTRPG的滿意度，改進使用體驗。\
+		\n另外, 最近因為資料庫開始爆滿，所以對關鍵字功能進行限制，每個GP 30個上限，\
+		\n如果完成問卷,可以提升上限半年WW\
+		\nhttps://forms.gle/JnHdGs4oRMd9SQhM6";
+
 
 client.once('ready', async () => {
 	console.log('Discord is Ready!');
@@ -115,12 +118,12 @@ client.on('message', async (message) => {
 	}
 
 	if (!message.content) {
+		await courtMessage("", "Discord", "")
 		if (groupid && userid) {
-			await exports.analytics.EXPUP(groupid, userid, displayname, displaynameDiscord, membercount);
+			await EXPUP(groupid, userid, displayname, displaynameDiscord, membercount);
 		}
 		return null;
 	}
-	let CAPTCHA = random.string(20);
 	let rplyVal = {};
 	let trigger = "";
 	let msgSplitor = (/\S+/ig);
@@ -153,20 +156,16 @@ client.on('message', async (message) => {
 
 	if (channelKeyword != "" && trigger == channelKeyword.toString().toLowerCase()) {
 		//mainMsg.shift();
-		rplyVal = await exports.analytics.parseInput(message.content, groupid, userid, userrole, "Discord", displayname, channelid, displaynameDiscord, membercount, CAPTCHA);
+		rplyVal = await exports.analytics.parseInput(message.content, groupid, userid, userrole, "Discord", displayname, channelid, displaynameDiscord, membercount);
 	} else {
 		if (channelKeyword == "") {
-			rplyVal = await exports.analytics.parseInput(message.content, groupid, userid, userrole, "Discord", displayname, channelid, displaynameDiscord, membercount, CAPTCHA);
+			rplyVal = await exports.analytics.parseInput(message.content, groupid, userid, userrole, "Discord", displayname, channelid, displaynameDiscord, membercount);
 		}
 	}
 	if (!rplyVal.text && !rplyVal.LevelUp) {
 		return;
 	}
 	if (!hasSendPermission) {
-		return;
-	}
-	if (CAPTCHA != rplyVal.CAPTCHA) {
-		console.log('Discord CAPTCHA false', CAPTCHA, ' &&', rplyVal.CAPTCHA, "TEXT", message.content, 'rplyVal: ', rplyVal);
 		return;
 	}
 	if (groupid && rplyVal && rplyVal.LevelUp) {
@@ -271,10 +270,9 @@ client.on('message', async (message) => {
 				try {
 					//V12ERROR return await client.users.get(targetid).send(replyText.toString().match(/[\s\S]{1,2000}/g)[i]);
 					client.users.cache.get(targetid).send(replyText.toString().match(/[\s\S]{1,2000}/g)[i]);
-
 				}
 			catch (e) {
-				console.log('error SendtoID: ', e.message)
+				console.log(' GET ERROR:  SendtoID: ', e.message)
 			}
 		}
 
@@ -285,10 +283,9 @@ client.on('message', async (message) => {
 			if (i == 0 || i == 1 || i == replyText.toString().match(/[\s\S]{1,2000}/g).length - 1 || i == replyText.toString().match(/[\s\S]{1,2000}/g).length - 2)
 				try {
 					await message.author.send(replyText.toString().match(/[\s\S]{1,2000}/g)[i]);
-
 				}
 			catch (e) {
-				console.log('error SendToReply: ', e.message)
+				console.log(' GET ERROR:  SendToReply: ', e.message)
 			}
 		}
 	}
@@ -299,7 +296,7 @@ client.on('message', async (message) => {
 					await message.channel.send(replyText.toString().match(/[\s\S]{1,2000}/g)[i]);
 				}
 			catch (e) {
-				console.log('error SendToReplychannel: ', e.message);
+				console.log(' GET ERROR: SendToReplychannel: ', e.message);
 			}
 		}
 	}
