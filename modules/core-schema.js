@@ -88,7 +88,7 @@ const trpgLevelSystem = mongoose.model('trpgLevelSystem', {
         name: String,
         EXP: Number,
         //現在經驗值
-        Level: String,
+        Level: Number,
         //等級
         LastSpeakTime: {
             type: Date,
