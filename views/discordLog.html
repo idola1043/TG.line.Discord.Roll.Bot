@@ -225,9 +225,11 @@
             <div class="form-row">
                 <div class="form-group col-md-3 mx-auto">
                     <div class="input-group mb-3">
-                        <input type="password" class="form-control" aria-describedby="passwordHelpBlock"
-                            placeholder="請輸入密碼" id="passw0rd">
-                        <button class="btn btn-warning" v-on:click="reNew">開始解密</button>
+                        <form action='/app' method='post'>
+                            <input type='text' name='name' value='' placeholder="密碼一">
+                            <input type='text' name='code' value='' placeholder="密碼二">
+                            <input type='submit' value='Submit'>
+                        </form>
                     </div>
                 </div>
             </div>

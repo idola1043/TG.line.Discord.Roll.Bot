@@ -11,6 +11,10 @@ var options = {
     key: null,
     cert: null
 };
+var bodyParser = require('body-parser');
+var urlencodedParser = bodyParser.urlencoded({
+    extended: false
+});
 
 async function read() {
     if (keyPem)
@@ -58,6 +62,16 @@ www.get('/', (req, res) => {
 www.get('/app/discord/:id', (req, res) => {
     if (req.originalUrl.match(/html$/))
         res.sendFile(process.cwd() + '/tmp/' + req.originalUrl.replace('/app/discord/', ''));
+});
+
+www.get('/app', (req, res) => {
+    res.sendFile(process.cwd() + '/views/discordLog.html');
+});
+
+www.post('/app', urlencodedParser, (req, res) => {
+    console.log(req);
+    console.log(req.body.name);
+    //console.log(req.body);
 });
 
 io.on('connection', (socket) => {
