@@ -424,7 +424,7 @@ const TarotList = ["Amprodias＋\nhttps://raw.githubusercontent.com/hktrpg/TG.li
 	"Mi-Habekiyeh-Ruach－\nhttps://raw.githubusercontent.com/hktrpg/TG.line.Discord.Roll.Bot/master/assets/tarot/WANDS_KNIGHT-Re.jpg",
 	"Mi-Habekiyeh-Nephesh－\nhttps://raw.githubusercontent.com/hktrpg/TG.line.Discord.Roll.Bot/master/assets/tarot/WANDS_PAGE-Re.jpg",
 	"Mi-Habekiyeh-Neschamah－\nhttps://raw.githubusercontent.com/hktrpg/TG.line.Discord.Roll.Bot/master/assets/tarot/WANDS_QUEEN-Re.jpg",
-	"空白"
+	"Chasek"
 ]
 
 const TarotList2 = ["Amprodias＋",
